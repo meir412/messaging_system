@@ -7,19 +7,18 @@ from django.http import JsonResponse
 from messaging_app.models import Message
 
 
-def getMessages(request, user_id):
+def getMessages(request):
 
-    # query = Message.objects.filter(sender=request.user.id)
-    sender = User.objects.get(id=user_id)
+    sender = User.objects.get(id = request.user.id)
     query = Message.objects.filter(sender=sender)
     data = _returnData(query)
 
     return JsonResponse(data, safe=False)
 
 
-def getUnreadMessages(request, user_id):
+def getUnreadMessages(request):
 
-    sender = User.objects.get(id=user_id)
+    sender = User.objects.get(id = request.user.id)
     query = Message.objects.filter(sender=sender, unread=True)
     data = _returnData(query)
 
@@ -28,8 +27,11 @@ def getUnreadMessages(request, user_id):
 
 def readMessage(request, message_id):
 
-    # After adding authentication, only allow sender or receiver to read message
     message = Message.objects.get(id=message_id)
+    if request.user.id not in (message.sender.id, message.receiver.id):
+        response = {"response":"It is only possible to read messages sent or received by you"}
+        return JsonResponse(response)
+
     if message.unread == True:
         message.unread = False
         message.save()
@@ -47,8 +49,11 @@ def readMessage(request, message_id):
 
 def deleteMessage(request, message_id):
 
-    # After adding authentication, only allow sender or receiver to read message
     message = Message.objects.get(id=message_id)
+    if request.user.id not in (message.sender.id, message.receiver.id):
+        response = {"response":"It is only possible to delete messages sent or received by you"}
+        return JsonResponse(response)
+
     message.delete()
 
     response = {"response":"Message deleted succesfully"}
