@@ -1,37 +1,68 @@
 import json
 
 from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from messaging_app.models import Message
 
 
 def getMessages(request, user_id):
+    """ This view retreives all messages for a specific user according to the user_id of the receiver of the message """
+    
+    data = {"response": None, "error": None}
+    try:
+        receiver = User.objects.get(id=user_id)
 
-    receiver = User.objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        data['error'] = f"User with id {user_id} doesn't exist in the database"
+        return JsonResponse(data, status=404)
+
     query = Message.objects.filter(receiver=receiver)
-    data = _returnData(query)
-
-    return JsonResponse(data, safe=False)
-
+    if len(query) == 0:
+        data['error'] = f"User '{receiver.username}' hasn't received any messages yet"
+        return JsonResponse(data, status=404)
+    
+    data['response'] = _returnData(query)
+    return JsonResponse(data)
+        
 
 def getUnreadMessages(request, user_id):
+    """ This view retreives all unread messages for a specific user according to the user_id of the receiver of the message """
+    
+    data = {"response": None, "error": None}
+    try:
+        receiver = User.objects.get(id=user_id)
 
-    receiver = User.objects.get(id=user_id)
+    except ObjectDoesNotExist:
+        data['error'] = f"User with id {user_id} doesn't exist in the database"
+        return JsonResponse(data, status=404)
+
     query = Message.objects.filter(receiver=receiver, unread=True)
-    data = _returnData(query)
+    if len(query) == 0:
+        data['error'] = f"User '{receiver.username}' doesn't have any unread messages"
+        return JsonResponse(data, status=404)
 
-    return JsonResponse(data, safe=False)
+    data['response'] = _returnData(query)
+    return JsonResponse(data)
 
 
 def readMessage(request, message_id):
+    """ This view returns a specific message according to the message id """
 
-    message = Message.objects.get(id=message_id)
+    data = {"response": None, "error": None}
+    try:
+        message = Message.objects.get(id=message_id)
+    
+    except ObjectDoesNotExist:
+        data['error'] = f"Message with id {message_id} doesn't exist in the database"
+        return JsonResponse(data, status=404)
+
     if message.unread == True:
         message.unread = False
         message.save()
 
-    data = {
+    data['response'] = {
             "message_id": message.id,
             "sender": message.sender.username,
             "receiver": message.receiver.username,
@@ -43,13 +74,20 @@ def readMessage(request, message_id):
 
 
 def deleteMessage(request, message_id):
+    """ This view deletes a specific message according to the message id """
+    
+    data = {"response": None, "error": None}
+    try:
+        message = Message.objects.get(id=message_id)
+    
+    except ObjectDoesNotExist:
+        data['error'] = f"Message with id {message_id} doesn't exist in the database"
+        return JsonResponse(data, status=404)
 
-    # After adding authentication, only allow sender or receiver to read message
-    message = Message.objects.get(id=message_id)
     message.delete()
 
-    response = {"response":"Message deleted succesfully"}
-    return JsonResponse(response)
+    data['response'] = "Message deleted succesfully"
+    return JsonResponse(data)
 
 def _returnData(query):
 
