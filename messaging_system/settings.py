@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Secret key - for production get from env, for development fallback to hardcoded
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '*7=9^@+mc9@r5jpc!9+p9pp7qr4mj6irpydpzi7x!z98&u*bdf')
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['127.0.0.1','uri-messaging-system.herokuapp.com']
 
 
@@ -50,7 +50,7 @@ ROOT_URLCONF = 'messaging_system.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

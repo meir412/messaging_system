@@ -4,7 +4,13 @@ from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.shortcuts import render
+
 from messaging_app.models import Message
+
+def home(request):
+    """ Static home page view, links to documentation and code repo """
+    return render(request, 'index.html')
 
 
 def getMessages(request, user_id):
@@ -75,7 +81,7 @@ def readMessage(request, message_id):
 
 def deleteMessage(request, message_id):
     """ This view deletes a specific message according to the message id """
-    
+
     data = {"response": None, "error": None}
     try:
         message = Message.objects.get(id=message_id)
