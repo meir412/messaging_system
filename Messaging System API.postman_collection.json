@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "51533d6d-c325-436c-9107-2bb89f7fdac7",
+		"name": "Messaging System API",
+		"description": "An API for a basic messaging system.\nContains 4 requests:\n1. Get Messages\n2. Get Unread Messages\n3. Read Message\n4. Delete Message\nThe requests should always return a JSON, with a `response` value and an `error` value\n* example:\n```\n{\nresponse: ...\nerror: ...\n}\n```\n* If the request was successfull `response` will be populated with the relevant data and `error` will remain empty. The response will contain a `200` status code.\n* If the request has failed or no objects were found `error` will be populated with the relevant data and `response` will remain empty. The response will contain a `404` status code.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Messages",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "uri-messaging-system.herokuapp.com/messaging_app/getmessages/1",
+					"host": [
+						"uri-messaging-system",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"messaging_app",
+						"getmessages",
+						"1"
+					]
+				},
+				"description": "## Get all messages for a specific user\n\n* Retrieve all messages for a specific user according to the `user_id` of the receiver of the message.\n* Specify the `user_id` in the last part of the url\n* for example, a request ending with `.../getmessages/1` will retrieve messages for the user with `user_id` = 1\n* The request will return a json with a `response` and an `error`\n* If the user_id exists in the db and has already received messages, `response` will be populated with a list of these messages including their sender, receiver, subject, content and date.\n* If the user_id doesn't exist or exists but hasn't received any messages yet, `error` will be populated with an error message."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Unread Messages",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "uri-messaging-system.herokuapp.com/messaging_app/getunreadmessages/1",
+					"host": [
+						"uri-messaging-system",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"messaging_app",
+						"getunreadmessages",
+						"1"
+					]
+				},
+				"description": "## Get all unread messages for a specific user\n\n* Retrieve all unread messages for a specific user according to the `user_id` of the receiver of the message.\n* Specify the `user_id` in the last part of the url\n* for example, a request ending with `.../getunreadmessages/1` will retrieve messages for the user with `user_id` = 1\n* A message is marked as `unread` in the db untill it has been read using the `Read Message` request.\n* * The request will return a json with a `response` and an `error`\n* If the user_id exists in the db and has already received unread messages, `response` will be populated with a list of these messages including their sender, receiver, subject, content and date.\n* If the user_id doesn't exist or exists but doesn't have any unread messages yet, `error` will be populated with an error message."
+			},
+			"response": []
+		},
+		{
+			"name": "Read Message",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "uri-messaging-system.herokuapp.com/messaging_app/readmessage/7",
+					"host": [
+						"uri-messaging-system",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"messaging_app",
+						"readmessage",
+						"7"
+					]
+				},
+				"description": "* Read a specific message according to it's `message_id`\n* Specify the `message_id` in the last part of the url\n* For example, a request ending with `.../readmessage/1` will return the message with `message_id` = 1\n* Notice that after this request has been called on a message, this message will be marked as `read` in the db and will no longer be returned in the `Get Unread Messages` request.\n* The request will return a json with a `response` and an `error`\n* If the message_id exists in the db, `response` will be populated with the details of the message (id, sender, receiver, subject and message).\n* If the message_id doesn't exist, `error` will be populated with an error message."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Message",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "uri-messaging-system.herokuapp.com/messaging_app/deletemessage/7",
+					"host": [
+						"uri-messaging-system",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"messaging_app",
+						"deletemessage",
+						"7"
+					]
+				},
+				"description": "* Delete a specific message according to it's `message_id`\n* Specify the `message_id` in the last part of the url\n* For example, a request ending with `.../deletemessage/3` will return the message with `message_id` = 3\n* Notice that after this request has been called on a message, this message will be deleted and wont be able to be read or fetched.\n* The request will return a json with a `response` and an `error`\n* If the message_id exists in the db, `response` will be populated with a success message.\n* If the message_id doesn't exist, `error` will be populated with an error message."
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
